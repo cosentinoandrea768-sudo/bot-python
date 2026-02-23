@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 import os
+import json
 
 # ======================
 # Variabili Telegram
@@ -54,7 +55,18 @@ def send_telegram(msg: str):
 @app.route("/webhook-tv", methods=["POST"])
 def webhook_tv():
     try:
-        data = request.get_json(force=True)  # forza il parsing anche se Content-Type non è JSON
+        # Legge il body raw come stringa
+        raw = request.data.decode('utf-8')
+        print("Raw webhook received:", raw)
+
+        # Prova a fare il parsing del JSON inviato da Pine Script
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as e:
+            print("Errore parsing JSON:", e)
+            return jsonify({"error": "Malformed JSON"}), 400
+
+        # Estrai campi dal JSON
         pair = data.get("pair")
         score = data.get("score")
         zone = data.get("zone")
@@ -66,8 +78,9 @@ def webhook_tv():
 
         msg = f"📊 <b>{pair}</b>\nScore: {score}\nZona: {zone} ({text_alert})\nGrafico: {link}"
         send_telegram(msg)
-        print("Webhook ricevuto:", data)
+        print("Webhook elaborato correttamente:", data)
         return jsonify({"status": "ok"}), 200
+
     except Exception as e:
         print("Errore gestione webhook:", e)
         return jsonify({"error": "Server error"}), 500
