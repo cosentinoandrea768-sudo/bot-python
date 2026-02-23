@@ -21,6 +21,13 @@ def ping():
     return "Bot is alive ✅", 200
 
 # ======================
+# Root endpoint (homepage) per test
+# ======================
+@app.route("/", methods=["GET"])
+def home():
+    return "Server attivo e funzionante ✅", 200
+
+# ======================
 # Funzione invio Telegram
 # ======================
 def send_telegram(msg: str):
