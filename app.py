@@ -52,11 +52,19 @@ def webhook_tv():
         zone = data.get("zone")
         text_alert = data.get("text")
         link = data.get("link")
+        timeframe = data.get("timeframe")  # 🔹 Nuovo campo atteso dal Pine Script
 
-        if not all([pair, score, zone, text_alert, link]):
+        if not all([pair, score, zone, text_alert, link, timeframe]):
             return jsonify({"error": "Missing parameters"}), 400
 
-        msg = f"📊 <b>{pair}</b>\nScore: {score}\nZona: {zone} ({text_alert})\nGrafico: {link}"
+        # 🔹 Messaggio Telegram aggiornato con timeframe in minuti
+        msg = (
+            f"📊 <b>{pair}</b>\n"
+            f"Score: {score}\n"
+            f"Zona: {zone} ({text_alert})\n"
+            f"Timeframe: {timeframe}\n"
+            f"Grafico: {link}"
+        )
         send_telegram(msg)
         print("Webhook elaborato correttamente:", data)
         return jsonify({"status": "ok"}), 200
