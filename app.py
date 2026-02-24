@@ -6,7 +6,7 @@ import json
 # ======================
 # Istanza Flask
 # ======================
-app = Flask(__name__)   # <- DEVE ESSERE QUI PRIMA DI QUALSIASI @app.route
+app = Flask(__name__)
 
 # ======================
 # Variabili Telegram
@@ -52,16 +52,16 @@ def webhook_tv():
         zone = data.get("zone")
         text_alert = data.get("text")
         link = data.get("link")
-        timeframe = data.get("timeframe")  # 🔹 Nuovo campo atteso dal Pine Script
+        timeframe = data.get("timeframe")
 
         if not all([pair, score, zone, text_alert, link, timeframe]):
             return jsonify({"error": "Missing parameters"}), 400
 
-        # 🔹 Sostituzione professionale del testo specifico
-        if text_alert.strip().lower() == "possibile perdita di forza long/short":
+        # 🔹 Sostituzione precisa del testo inviato dal Pine Script
+        if text_alert == "possibile perdita di forza long/short":
             text_alert = "Possibile massimo /minimo locale"
 
-        # 🔹 Messaggio Telegram aggiornato con timeframe in minuti
+        # 🔹 Messaggio Telegram
         msg = (
             f"📊 <b>{pair}</b>\n"
             f"Score: {score}\n"
